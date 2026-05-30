@@ -1,0 +1,49 @@
+name: Stroke Preprocessing Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'healthcare-dataset-stroke-data.csv'
+      - 'preprocessing/**'
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'healthcare-dataset-stroke-data.csv'
+      - 'preprocessing/**'
+
+  workflow_dispatch:
+
+jobs:
+  preprocess:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12.7'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy scikit-learn matplotlib seaborn
+
+    - name: Run Preprocessing
+      run: |
+        cd preprocessing
+        python automate_Zickrian.py
+
+    - name: Upload Processed Dataset
+      uses: actions/upload-artifact@v4
+      with:
+        name: stroke-preprocessing
+        path: preprocessing/stroke_preprocessing.csv
